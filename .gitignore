@@ -13,3 +13,7 @@ Sons/
 
 # Personal working notes (project spec for Claude Code)
 CLAUDE.md
+
+# Downloadable app (Scripts/package.sh)
+dist/
+*.dmg

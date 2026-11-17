@@ -37,5 +37,6 @@ jobs:
       - name: Check the app
         run: |
           test -x "build/Cube Hub.app/Contents/MacOS/CubeWidget"
+          test -x "build/Cube Hub.app/Contents/Helpers/cube-hook"
           plutil -lint "build/Cube Hub.app/Contents/Info.plist"
-          codesign --verify "build/Cube Hub.app"
+          codesign --verify --strict "build/Cube Hub.app"

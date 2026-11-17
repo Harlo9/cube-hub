@@ -19,6 +19,7 @@ final class WidgetWindowController {
     private var menuBar: MenuBarController?
     private var hotKey: WidgetHotKey?
     private var settingsWindow: SettingsWindowController!
+    private let welcomeWindow = WelcomeWindowController()
     private let telegramNotifier = TelegramNotifier()
     private let telegramRemote: TelegramRemote
     private var observers: Set<AnyCancellable> = []
@@ -47,7 +48,8 @@ final class WidgetWindowController {
             onOpenSession: { [weak hubController] session in hubController?.open(session) },
             onOpenHub: { [weak hubController] in hubController?.show() },
             onNewSession: { [weak hubController] in hubController?.newProject() },
-            onOpenSettings: { [weak settingsWindow] in settingsWindow?.show() }))
+            onOpenSettings: { [weak settingsWindow] in settingsWindow?.show() },
+            onOpenWelcome: { [weak welcomeWindow] in welcomeWindow?.show() }))
         hostingView.sizingOptions = []   // the window size is set by `windowSize` only
         panel.contentView = hostingView
         panel.setContentSize(windowSize(scale: settings.scale))
@@ -124,6 +126,9 @@ final class WidgetWindowController {
 
         // ⌃⌥W, from any app: same setting as "Afficher le widget".
         hotKey = WidgetHotKey { [weak self] in self?.settings.isVisible.toggle() }
+
+        // First launch without the Claude Code hooks: the welcome window offers to add them.
+        welcomeWindow.showIfNeeded()
 
         // "Afficher le widget" (menu bar icon or Réglages): shows or hides the panel.
         settings.$isVisible
@@ -285,6 +290,7 @@ struct WidgetRootView: View {
     /// Asks for a folder and starts Claude there, in the Cube Hub.
     let onNewSession: () -> Void
     let onOpenSettings: () -> Void
+    let onOpenWelcome: () -> Void
     /// The card under the mouse: a right click on it offers its Telegram setting.
     @State private var hoveredSessionID: Session.ID?
 
@@ -314,6 +320,7 @@ struct WidgetRootView: View {
                 Button("Réglages…") { onOpenSettings() }
                 Divider()
                 Menu("Debug") {
+                    Button("Fenêtre d'accueil") { onOpenWelcome() }
                     Button("Vraies sessions") { debug { board.showRealSessions() } }
                     Section("Démo · projet actif") {
                         Button("Aucune session") { debug { board.debugSetActiveStatus(nil) } }

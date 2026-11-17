@@ -76,7 +76,35 @@ When I send a message to a session (in the Hub, in Terminal or from Telegram), i
 
 ## 🚀 Getting started
 
-**You need:** macOS 14 (Sonoma) or newer, the Swift tools (Xcode, or `xcode-select --install`) and [Claude Code](https://claude.com/claude-code).
+**You need:** a Mac with macOS 14 (Sonoma) or newer, Apple Silicon or Intel, and [Claude Code](https://claude.com/claude-code).
+
+### Download (easiest)
+
+1. Grab **Cube-Hub-x.y.z.dmg** from the [latest release](https://github.com/Harlo9/cube-hub/releases/latest), open it and drag **Cube Hub** onto **Applications**.
+2. Open Cube Hub. The first time, macOS blocks it: I'm not paying Apple's developer program yet, so the app isn't notarized. Go to **System Settings → Privacy & Security**, scroll down to the message about Cube Hub and click **Open Anyway** (then confirm). You only do this once.
+3. The welcome window offers to plug Cube Hub into Claude Code (see below). Then the cube shows up in the top right corner of your screen and in the menu bar.
+
+<details>
+<summary><b>Rather use Terminal for step 2?</b></summary>
+
+<br>
+
+This removes the "downloaded from the internet" mark that makes macOS block the app:
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Cube Hub.app"
+```
+
+</details>
+
+> [!NOTE]
+> Because the app isn't signed with an Apple developer certificate, macOS may ask again for some permissions after an update (controlling Terminal, the keychain where your Telegram token is stored). Just say yes again.
+
+You can check the download: each release comes with a `.sha256` file, compare it with `shasum -a 256 Cube-Hub-x.y.z.dmg`.
+
+### Or build it yourself
+
+You also need the Swift tools (Xcode, or `xcode-select --install`).
 
 ```bash
 git clone https://github.com/Harlo9/cube-hub.git
@@ -84,14 +112,16 @@ cd cube-hub
 ./build.sh
 ```
 
-That's it. `build.sh` builds the app into `build/Cube Hub.app`, installs the small `cube-hook` program into `~/.cube-widget/bin/`, then launches the app. `./build.sh --no-run` only builds.
+`build.sh` builds the app into `build/Cube Hub.app` and launches it. The small `cube-hook` program ships inside the app, which copies it into `~/.cube-widget/bin/` at launch. `./build.sh --no-run` only builds, `./build.sh --universal` also builds for Intel Macs, and `Scripts/package.sh` makes the DMG.
 
 ### 1. Plug it into Claude Code
 
 The app knows what your sessions are doing thanks to [Claude Code hooks](https://code.claude.com/docs/en/hooks): on every event, Claude Code runs `cube-hook`, which writes a tiny file per session in `~/.cube-widget/sessions/`. It never prints anything, never blocks Claude Code (about 13 ms per call) and ignores what it doesn't understand.
 
+**The app does it for you.** On first launch, a welcome window shows the exact lines it will add to `~/.claude/settings.json` and adds them when you click "Brancher Claude Code". It saves a copy of your file first (`settings.json.cubehub-backup-<date>`) and leaves your other settings and hooks alone. You can unplug them anytime in Réglages → Général.
+
 <details>
-<summary><b>The hooks to add to <code>~/.claude/settings.json</code></b></summary>
+<summary><b>Prefer to do it by hand? The hooks to add to <code>~/.claude/settings.json</code></b></summary>
 
 <br>
 
@@ -131,7 +161,7 @@ Sessions that are already open show up at their next event.
 
 - **"Cube Hub wants to control Terminal"** (the "Afficher dans Terminal" button in the Hub): OK. You can change it later in System Settings → Privacy & Security → Automation.
 - **"Cube Hub would like to send you notifications"** (only if you turn on Telegram commands): Allow.
-- The first time, macOS may ask if `codesign` can use a key from your keychain: "Always Allow". `build.sh` signs with your "Apple Development" certificate if you have one, otherwise with a local signature.
+- If you build it yourself, macOS may ask if `codesign` can use a key from your keychain: "Always Allow". `build.sh` signs with your "Apple Development" certificate if you have one, otherwise with a local signature.
 
 </details>
 
@@ -142,7 +172,7 @@ Sessions that are already open show up at their next event.
 
 <br>
 
-Three sounds come from macOS (Glass, Purr, Bottle): `build.sh` takes them straight from your Mac. For the "Claude starts working" sound, or to replace the others, put your own files in a `Sons/` folder at the root: `bosse`, `fini`, `attente`, `dodo` (`.aiff`, `.wav`, `.mp3` or `.m4a`). A missing sound just plays nothing.
+By default, the cube uses sounds that come with macOS (Pop, Glass, Purr, Bottle), played straight from your Mac. To use your own, put files named `bosse`, `fini`, `attente` or `dodo` (`.aiff`, `.wav`, `.mp3` or `.m4a`) in `~/.cube-widget/Sons/` and relaunch the app. If you build the app yourself, a `Sons/` folder at the root of the project also goes into the app.
 
 </details>
 

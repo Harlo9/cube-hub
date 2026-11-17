@@ -476,6 +476,16 @@ enum Constants {
     // MARK: - Settings
 
     /// The "Réglages" window (gear of the Cube Hub, ⌘,).
+    enum Welcome {
+        /// The window shown at the first launch ("Brancher Claude Code").
+        static let width: CGFloat = 520
+        static let iconSize: CGFloat = 64
+        /// Height of the box showing the lines added to ~/.claude/settings.json.
+        static let previewHeight: CGFloat = 160
+        /// Opened by "Installer Claude Code" when it does not seem installed.
+        static let claudeCodeURL = URL(string: "https://claude.com/claude-code")!
+    }
+
     enum Settings {
         /// Size when first opened (then remembered), and smallest size, in points.
         static let windowSize = CGSize(width: 600, height: 430)
@@ -527,6 +537,10 @@ enum Constants {
         /// "Volume général" at first launch, applied on top of each sound's volume
         /// (the speaker of the Hub's toolbar, Réglages → Sons).
         static let masterVolume: Float = 1.0
+        /// Without a sound file of that name (in ~/.cube-widget/Sons or in the app), this
+        /// sound of macOS is played instead, from /System/Library/Sounds (its name, without
+        /// ".aiff"; the others: Basso, Blow, Frog, Funk, Hero, Morse, Ping, Sosumi, Submarine).
+        static let systemSounds = ["bosse": "Pop", "fini": "Glass", "attente": "Purr", "dodo": "Bottle"]
         /// A sound that goes with a cube animation waits for that animation to start
         /// (end of the current move, or wake-up). Past this delay, in seconds, it is dropped.
         static let cueMaxDelay = 3.0

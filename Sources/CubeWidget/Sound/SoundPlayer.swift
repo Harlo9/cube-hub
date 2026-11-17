@@ -1,6 +1,10 @@
 import AVFoundation
+import SessionFile
 
-/// Plays the short sounds of the Sons/ folder (copied into the app by build.sh).
+/// Plays the short sounds of the cube. Each one is looked for in ~/.cube-widget/Sons (your
+/// own sounds), then in the app (the Sons/ folder, copied by build.sh), then among the
+/// sounds of macOS (`Constants.Sound.systemSounds`), played where they are: they belong to
+/// Apple, so they are never shipped with the app.
 ///
 /// Everything audio happens on a background queue: starting a sound can take tens of
 /// milliseconds, which would freeze the cube animation if done on the main thread.
@@ -77,11 +81,14 @@ enum SoundPlayer {
     /// Call on `queue` only.
     private static func player(for sound: Sound) -> AVAudioPlayer? {
         if let cached = players[sound] { return cached }
-        let folder = Bundle.main.resourceURL?.appendingPathComponent("Sons")
-        let player = extensions.lazy
-            .compactMap { folder?.appendingPathComponent("\(sound.rawValue).\($0)") }
+        let folders = [SessionFiles.baseDirectory.appendingPathComponent("Sons"),
+                       Bundle.main.resourceURL?.appendingPathComponent("Sons")].compactMap { $0 }
+        let own = folders.lazy
+            .flatMap { folder in extensions.map { folder.appendingPathComponent("\(sound.rawValue).\($0)") } }
             .first { FileManager.default.fileExists(atPath: $0.path) }
-            .flatMap { try? AVAudioPlayer(contentsOf: $0) }
+        let system = Constants.Sound.systemSounds[sound.rawValue]
+            .map { URL(fileURLWithPath: "/System/Library/Sounds/\($0).aiff") }
+        let player = (own ?? system).flatMap { try? AVAudioPlayer(contentsOf: $0) }
         player?.prepareToPlay()
         players[sound] = .some(player)
         return player

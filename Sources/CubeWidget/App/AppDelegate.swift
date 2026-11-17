@@ -4,6 +4,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var widget: WidgetWindowController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        HookProgram.install()
         let widget = WidgetWindowController()
         widget.show()
         self.widget = widget

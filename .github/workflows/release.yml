@@ -1,0 +1,54 @@
+# When a version tag is pushed (git tag v0.2.0 && git push origin v0.2.0), a Mac lent by
+# GitHub runs the tests, makes the DMG (Scripts/package.sh) and publishes it in the
+# repository's "Releases" tab, with its SHA-256 fingerprint.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write   # to create the release and attach the files
+
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0   # every commit: build.sh counts them for the build number
+
+      # The tag and the VERSION file must say the same thing (v0.2.0 ↔ 0.2.0).
+      - name: Check the version
+        run: |
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          if [ "$GITHUB_REF_NAME" != "v$VERSION" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match VERSION ($VERSION)" >&2
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Tests
+        run: swift build && swift test
+
+      - name: Make the DMG
+        run: Scripts/package.sh
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > notes.md <<EOF
+          ## Install
+
+          1. Download **Cube-Hub-$VERSION.dmg** below, open it and drag **Cube Hub** onto **Applications**.
+          2. Open Cube Hub. macOS blocks it the first time (the app is not notarized by Apple): go to **System Settings → Privacy & Security**, scroll down and click **Open Anyway**.
+          3. The welcome window offers to plug Cube Hub into Claude Code.
+
+          Works on macOS 14 or newer, Apple Silicon and Intel. See the [README](https://github.com/$GITHUB_REPOSITORY#readme) for the details.
+
+          EOF
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/Cube-Hub-$VERSION.dmg" "dist/Cube-Hub-$VERSION.dmg.sha256" \
+            --title "Cube Hub $VERSION" --notes-file notes.md --generate-notes
