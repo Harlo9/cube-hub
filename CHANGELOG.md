@@ -2,7 +2,7 @@
 
 What changes from one version of Cube Hub to the next. The newest version is at the top.
 
-## [0.2.0] - unreleased
+## [0.2.0] - 2026-11-18
 
 The first version you can download: no need to build it yourself anymore.
 
