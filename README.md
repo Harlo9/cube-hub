@@ -1,13 +1,13 @@
 <div align="center">
 
-<img src="docs/icon.png" width="128" alt="The CUBE icon: a blue ice cube on a black rounded square">
+<img src="docs/icon.png" width="128" alt="The Cube Hub icon: a blue ice cube on a black rounded square">
 
-# CUBE - ClaudeHub
+# Cube Hub
 
 **All my [Claude Code](https://claude.com/claude-code) sessions, at a glance, right on my Mac.**
 A stack of cards and a little animated ice cube that tells me when Claude is working, when it's waiting for me, and when it's done.
 
-[![CI](https://github.com/Harlo9/CUBE-ClaudeHub/actions/workflows/ci.yml/badge.svg)](https://github.com/Harlo9/CUBE-ClaudeHub/actions/workflows/ci.yml)
+[![CI](https://github.com/Harlo9/cube-hub/actions/workflows/ci.yml/badge.svg)](https://github.com/Harlo9/cube-hub/actions/workflows/ci.yml)
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-000000?logo=apple&logoColor=white)
 ![Swift 5.10](https://img.shields.io/badge/Swift-5.10-F05138?logo=swift&logoColor=white)
 ![SwiftUI](https://img.shields.io/badge/SwiftUI-AppKit-0A84FF)
@@ -18,7 +18,7 @@ A stack of cards and a little animated ice cube that tells me when Claude is wor
 </div>
 
 > [!NOTE]
-> **Personal project, not official.** CUBE isn't made or endorsed by Anthropic. The app itself is in French (I'm French 🇫🇷), the README is in English so more people can check it out.
+> **Personal project, not official.** Cube Hub isn't made or endorsed by Anthropic. The app itself is in French (I'm French 🇫🇷), the README is in English so more people can check it out.
 
 ---
 
@@ -79,8 +79,8 @@ When I send a message to a session (in the Hub, in Terminal or from Telegram), i
 **You need:** macOS 14 (Sonoma) or newer, the Swift tools (Xcode, or `xcode-select --install`) and [Claude Code](https://claude.com/claude-code).
 
 ```bash
-git clone https://github.com/Harlo9/CUBE-ClaudeHub.git
-cd CUBE-ClaudeHub
+git clone https://github.com/Harlo9/cube-hub.git
+cd cube-hub
 ./build.sh
 ```
 

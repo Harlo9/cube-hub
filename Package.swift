@@ -9,7 +9,7 @@ let package = Package(
         .executable(name: "cube-hook", targets: ["CubeHook"]),
     ],
     dependencies: [
-        // A terminal view for macOS (used by the Claude Hub window).
+        // A terminal view for macOS (used by the Cube Hub window).
         .package(url: "https://github.com/migueldeicaza/SwiftTerm", .upToNextMinor(from: "1.20.0")),
     ],
     targets: [

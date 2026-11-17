@@ -51,16 +51,16 @@ struct Session: Identifiable, Equatable {
 extension Session {
     /// Fake sessions used until the real data is wired (step 5).
     static let previews: [Session] = [
-        Session(id: "preview-1", projectName: "mission-azo", status: .working,
+        Session(id: "preview-1", projectName: "portfolio", status: .working,
                 startedAt: Date().addingTimeInterval(-34 * 60), contextTokens: 210_000,
-                currentTask: "Créer le parseur de factures OCR à partir des PDF scannés"),
-        Session(id: "preview-2", projectName: "safarifocus", status: .waiting,
+                currentTask: "Ajouter la page projets avec les captures d'écran"),
+        Session(id: "preview-2", projectName: "recipe-app", status: .waiting,
                 startedAt: Date().addingTimeInterval(-12 * 60), contextTokens: 48_000,
-                currentTask: "Corriger le bug du mode focus"),
-        Session(id: "preview-3", projectName: "cube-widget", status: .working,
+                currentTask: "Corriger le bug du panier"),
+        Session(id: "preview-3", projectName: "api-server", status: .working,
                 startedAt: Date().addingTimeInterval(-95 * 60), contextTokens: 132_000,
                 currentTask: nil),
-        Session(id: "preview-4", projectName: "notes-perso", status: .working,
+        Session(id: "preview-4", projectName: "notes", status: .working,
                 startedAt: Date().addingTimeInterval(-5 * 60), contextTokens: 9_000,
                 currentTask: "Ranger les notes"),
     ]
