@@ -200,6 +200,10 @@ final class TelegramRemote {
             RemoteLog.write("VERROUILLÉ  /lock")
             answer("🔒 Verrouillé.", to: message)
             return
+        case "/clear":
+            // Only removes messages, nothing is typed anywhere: works even while locked.
+            clearConversation(upTo: message.messageID)
+            return
         case "/aide", "/help", "/start":
             RemoteLog.write("AIDE")
             answer(Self.helpText, to: message)
@@ -261,6 +265,7 @@ final class TelegramRemote {
         ("unlock", "Déverrouiller (le bot te demande ton code à 6 chiffres)"),
         ("lock", "Reverrouiller tout de suite"),
         ("sessions", "Tes sessions et leur état (réponds à l'une pour lui écrire)"),
+        ("clear", "Effacer la conversation (messages de moins de 48 h)"),
         ("aide", "Comment ça marche"),
     ]
 
@@ -270,6 +275,7 @@ final class TelegramRemote {
         /unlock : déverrouille \(Int(T.unlockDuration / 60)) min, le bot te demande le code de ton app de codes (ou /unlock 123456 d'un coup)
         /lock : reverrouille
         /sessions : tes sessions et leur état
+        /clear : efface la conversation (Telegram ne laisse effacer que les messages de moins de 48 h)
         /aide : ce message
 
         Pour écrire à une session : réponds à une de ses notifications (glisse-la vers la gauche), ou à son message dans /sessions.
@@ -740,6 +746,38 @@ final class TelegramRemote {
             send("⛔ Trop de codes faux : commandes depuis Telegram désactivées. Réactive-les depuis le Mac.")
         case .notSetUp:
             send("✗ Le code de déverrouillage n'est pas configuré sur le Mac.")
+        }
+    }
+
+    /// `/clear`: removes the conversation's messages, from `/clear` back. The numbers of the
+    /// messages of a conversation follow each other, so every number before it is tried, 100
+    /// at a time (numbers of messages already gone are skipped). Telegram only lets a bot
+    /// remove messages less than 48 h old: a batch with an older one is refused, so its
+    /// messages are removed one by one, and the older ones are left (Telegram's "Effacer
+    /// l'historique" removes them).
+    private func clearConversation(upTo last: Int) {
+        guard let chatID = settings.chatID, let token = TelegramKeychain.token() else { return }
+        let first = max(1, last - T.clearMaxMessages + 1)
+        Task {
+            var top = last
+            var reached = last
+            while top >= first {
+                let batch = Array(max(first, top - 99)...top)
+                reached = batch[0]
+                do {
+                    try await TelegramClient.deleteMessages(batch, in: chatID, token: token)
+                } catch TelegramError.chatUnreachable {
+                    for id in batch.reversed() {
+                        try? await TelegramClient.deleteMessage(id, in: chatID, token: token)
+                    }
+                    break
+                } catch {
+                    RemoteLog.write("EFFACEMENT INTERROMPU  \(error.localizedDescription)")
+                    return
+                }
+                top = batch[0] - 1
+            }
+            RemoteLog.write("EFFACÉ  /clear (messages n° \(reached) à \(last))")
         }
     }
 

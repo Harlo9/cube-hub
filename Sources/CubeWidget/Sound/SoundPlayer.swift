@@ -56,11 +56,12 @@ enum SoundPlayer {
         queue.async { Sound.allCases.forEach { _ = player(for: $0) } }
     }
 
-    /// Plays a sound once, at its volume from Réglages → Sons (nothing if the sounds are
-    /// off). If it is already playing, it starts again from the beginning.
+    /// Plays a sound once, at its volume from Réglages → Sons times the general volume
+    /// (nothing if the sounds are off). If it is already playing, it starts again from
+    /// the beginning.
     static func play(_ sound: Sound) {
         guard SoundSettings.isOn else { return }
-        preview(sound, volume: SoundSettings.volume(of: sound))
+        preview(sound, volume: SoundSettings.volume(of: sound) * SoundSettings.master)
     }
 
     /// Plays a sound at a given volume, even if the sounds are off (the ▶ buttons).

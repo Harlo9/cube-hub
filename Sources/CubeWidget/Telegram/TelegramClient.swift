@@ -56,6 +56,11 @@ enum TelegramClient {
         _ = try await call("deleteMessage", token: token, parameters: ["chat_id": chatID, "message_id": messageID])
     }
 
+    /// Removes up to 100 messages at once (numbers of messages that are gone are skipped).
+    static func deleteMessages(_ messageIDs: [Int], in chatID: Int64, token: String) async throws {
+        _ = try await call("deleteMessages", token: token, parameters: ["chat_id": chatID, "message_ids": messageIDs])
+    }
+
     /// A button under a message (`data`: up to 64 bytes, sent back when it is tapped).
     struct Button {
         let text: String

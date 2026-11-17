@@ -325,6 +325,10 @@ enum Constants {
         /// The window keeps Terminal's usual size (80 x 24 by default, set in Terminal's
         /// settings → Profiles → Window).
         static let openTerminalGap: CGFloat = 0
+        /// The speaker of the toolbar (general volume of the sounds): width of its bubble,
+        /// and from which volumes its icon shows 2, then 3 waves (1 below).
+        static let volumePopoverWidth: CGFloat = 240
+        static let volumeIconThresholds: [Float] = [0.34, 0.67]
 
         // The big cube of a session running in Terminal, and of the empty page.
         static let bigCubeSize: CGFloat = 130
@@ -439,6 +443,8 @@ enum Constants {
         static let questionSubmitTries = 15
         /// `/sessions`: at most this many sessions are listed (one message each).
         static let remoteSessionsListMax = 10
+        /// `/clear`: how many of the last messages of the conversation are removed at most.
+        static let clearMaxMessages = 1000
         /// The "réponses depuis Telegram" icon, just before the bell: the space between them.
         static let remoteIconSpacing: CGFloat = 2
         /// `/unlock` with the six-digit code: how long the commands stay unlocked, in seconds.
@@ -518,6 +524,9 @@ enum Constants {
         static let waitingVolume: Float = 1.0
         /// Sons/dodo: the cube starts falling asleep.
         static let fallAsleepVolume: Float = 0.4
+        /// "Volume général" at first launch, applied on top of each sound's volume
+        /// (the speaker of the Hub's toolbar, Réglages → Sons).
+        static let masterVolume: Float = 1.0
         /// A sound that goes with a cube animation waits for that animation to start
         /// (end of the current move, or wake-up). Past this delay, in seconds, it is dropped.
         static let cueMaxDelay = 3.0

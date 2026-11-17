@@ -44,6 +44,7 @@ struct TelegramCommandsPage: View {
                 usageRow("2", "Réponds à une notification", "(glisse-la vers la gauche) : ton texte est envoyé à sa session.")
                 usageRow("3", "/sessions", "tes sessions et leur état : réponds à l'une d'elles pour lui écrire.")
                 usageRow("4", "/lock", "reverrouille tout de suite. /aide rappelle tout ça.")
+                usageRow("5", "/clear", "efface la conversation (Telegram ne laisse effacer que les messages de moins de 48 h).")
             }
         }
         .formStyle(.grouped)

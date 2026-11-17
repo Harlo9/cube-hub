@@ -30,6 +30,9 @@ struct HubView: View {
             detail
                 .navigationTitle("Cube Hub")
                 .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        HubVolumeButton(sounds: .shared)
+                    }
                     // Same setting as "Afficher le widget" in the menu bar and in Réglages.
                     ToolbarItem(placement: .primaryAction) {
                         Button { widget.isVisible.toggle() } label: {
