@@ -11,6 +11,7 @@ if let index = arguments.firstIndex(of: "--snapshot"), index + 1 < arguments.cou
         if arguments.contains("--waiting") { board.debugSetActiveStatus(.waiting) }
         if arguments.contains("--completed") { board.debugCompleteTask() }
         let cube = CubeAnimator(mood: board.cubeMood)
+        if arguments.contains("--waiting") { cube.showTintForSnapshot(.orange) }
         if let eyesIndex = arguments.firstIndex(of: "--eyes"), eyesIndex + 1 < arguments.count {
             let xy = arguments[eyesIndex + 1].split(separator: ",").compactMap { Double($0) }
             if xy.count == 2 { cube.showEyesForSnapshot(CGPoint(x: xy[0], y: xy[1])) }

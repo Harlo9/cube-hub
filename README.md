@@ -218,14 +218,22 @@ Sources/
     Sound/        the sounds
   CubeHook/       the program run by the Claude Code hooks
   SessionFile/    the session file format, shared by both
-Tests/            automated tests (cube-hook, session files, TOTP code, card order, Telegram texts)
-.github/workflows CI (build and tests on GitHub)
+Tests/            automated tests (cube-hook, session files, TOTP code, card order, Telegram texts, hooks)
+Scripts/          package.sh (the DMG), make_frames.swift, make_icon.sh
+.github/          CI, release workflow, issue templates
 Assets/           the original cube images (shrunk by Scripts/make_frames.swift)
 Resources/        shrunk images, icon, Info.plist
-docs/             the images of this README
+docs/             the images of this README; docs/design: the first mockups
+VERSION           the app's version (the only place to change it)
 ```
 
 </details>
+
+## 🔒 Privacy
+
+- **Everything stays on your Mac.** No account, no analytics, no server. Cube Hub reads the small files written by its hooks in `~/.cube-widget/` and the conversation files of Claude Code (to count tokens).
+- **Telegram is the only thing that goes online**, and only if you turn it on: notifications go to your own bot, and the short summary of Claude's answer is made by Claude Code itself (`claude -p` with the Haiku model, on your subscription).
+- Secrets (bot token, unlock code) live in the macOS keychain. More in [SECURITY.md](SECURITY.md).
 
 ## 🗺️ What's next
 
@@ -234,6 +242,8 @@ Stuff I want to add:
 - [ ] Answer **multiple-choice questions** from Telegram (for now: "answer from the Mac")
 - [ ] **Voice messages** from Telegram, transcribed on the Mac
 - [ ] A **Claude / Codex switch** when creating a session in the Hub
+
+What changed in each version: [CHANGELOG.md](CHANGELOG.md).
 
 ## 📄 License
 

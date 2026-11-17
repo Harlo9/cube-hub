@@ -314,6 +314,12 @@ final class CubeAnimator: ObservableObject {
         tint = .green
     }
 
+    /// Shows the cube still, in a given color (no fade). Only used by `--snapshot --waiting`.
+    func showTintForSnapshot(_ tint: FrameLibrary.Tint) {
+        director?.cancel()
+        self.tint = tint
+    }
+
     private func show(_ folder: FrameLibrary.Folder, _ number: Int) {
         frame = CubeFrame(folder: folder, number: number)
     }

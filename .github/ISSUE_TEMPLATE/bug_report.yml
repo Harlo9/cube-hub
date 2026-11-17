@@ -1,0 +1,32 @@
+name: Bug report
+description: Something doesn't work as it should.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what you got instead. Screenshots welcome.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Cube Hub version
+      description: Finder → Applications → Cube Hub → Get Info.
+      placeholder: "0.2.0"
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Mac
+      placeholder: "macOS 15.2, MacBook Air M2"
+  - type: input
+    id: claude
+    attributes:
+      label: Claude Code version
+      description: "`claude --version` in Terminal."
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else?
+      description: Please remove anything personal (Telegram token, chat ID, project names you'd rather keep private).
