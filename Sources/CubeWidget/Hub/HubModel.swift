@@ -30,6 +30,11 @@ final class HubModel: ObservableObject {
     /// covered): its cubes only move then.
     @Published var isOnScreen = false
 
+    /// The demo (widget's Debug menu): fake sessions in fake themes, nothing saved.
+    @Published private(set) var isDemo = false
+    private(set) var demoSessions: [Session] = []
+    private var beforeDemo: (order: [String], selection: Selection?)?
+
     private static let foldersKey = "hubProjectFolders"
     private static let orderKey = "hubOrder"
 
@@ -44,6 +49,28 @@ final class HubModel: ObservableObject {
     }
 
     var selected: HubProject? { projects.first { $0.id == selectedID } }
+
+    // MARK: - Demo
+
+    /// Shows the demo, or the real list again.
+    func toggleDemo() {
+        if isDemo {
+            guard let real = beforeDemo else { return }
+            beforeDemo = nil
+            isDemo = false
+            demoSessions = []
+            themes.endDemo()
+            order = real.order
+            selection = real.selection
+        } else {
+            beforeDemo = (order, selection)
+            demoSessions = HubDemo.sessions
+            order = demoSessions.map(Self.orderKey(for:))
+            themes.startDemo(themes: HubDemo.themes, assignment: HubDemo.assignment)
+            isDemo = true
+            selection = .session(HubDemo.selectedID)
+        }
+    }
 
     // MARK: - Order of the list
 
@@ -107,7 +134,9 @@ final class HubModel: ObservableObject {
     /// The list, by theme: each theme in its order (even empty), then "Sans thème" (only
     /// if it has cards, or if there is no theme at all). Cards in the chosen order.
     func sections(outside: [Session]) -> [Section] {
-        let items = ordered(projects.map(Item.project) + outside.map(Item.session), key: \.key)
+        let items = isDemo
+            ? ordered(demoSessions.map(Item.session), key: \.key)
+            : ordered(projects.map(Item.project) + outside.map(Item.session), key: \.key)
         var sections = themes.themes.map { theme in
             Section(theme: theme, items: items.filter { themes.themeID(forKey: $0.key) == theme.id },
                     isCollapsed: theme.isCollapsed)
@@ -122,6 +151,7 @@ final class HubModel: ObservableObject {
     /// Saves the order of a section (`keys`: its cards, in their new order).
     func setOrder(_ keys: [String]) {
         order = keys + order.filter { !keys.contains($0) }
+        guard !isDemo else { return }
         UserDefaults.standard.set(order, forKey: Self.orderKey)
     }
 

@@ -49,7 +49,8 @@ final class WidgetWindowController {
             onOpenHub: { [weak hubController] in hubController?.show() },
             onNewSession: { [weak hubController] in hubController?.newProject() },
             onOpenSettings: { [weak settingsWindow] in settingsWindow?.show() },
-            onOpenWelcome: { [weak welcomeWindow] in welcomeWindow?.show() }))
+            onOpenWelcome: { [weak welcomeWindow] in welcomeWindow?.show() },
+            onToggleHubDemo: { [weak hubController] in hubController?.toggleDemo() }))
         hostingView.sizingOptions = []   // the window size is set by `windowSize` only
         panel.contentView = hostingView
         panel.setContentSize(windowSize(scale: settings.scale))
@@ -291,6 +292,8 @@ struct WidgetRootView: View {
     let onNewSession: () -> Void
     let onOpenSettings: () -> Void
     let onOpenWelcome: () -> Void
+    /// Starts or ends the Hub's demo (fake projects and themes).
+    let onToggleHubDemo: () -> Void
     /// The card under the mouse: a right click on it offers its Telegram setting.
     @State private var hoveredSessionID: Session.ID?
 
@@ -321,6 +324,7 @@ struct WidgetRootView: View {
                 Divider()
                 Menu("Debug") {
                     Button("Fenêtre d'accueil") { onOpenWelcome() }
+                    Button("Hub de démo (marche / arrêt)") { onToggleHubDemo() }
                     Button("Vraies sessions") { debug { board.showRealSessions() } }
                     Section("Démo · projet actif") {
                         Button("Aucune session") { debug { board.debugSetActiveStatus(nil) } }

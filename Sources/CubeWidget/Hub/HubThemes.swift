@@ -108,7 +108,28 @@ final class HubThemes: ObservableObject {
         change(&themes[index])
     }
 
+    // MARK: - Demo
+
+    /// The real themes, kept while the demo's are shown (nothing is saved meanwhile).
+    private var beforeDemo: (themes: [HubTheme], assignment: [String: UUID], unthemedCollapsed: Bool)?
+
+    func startDemo(themes demoThemes: [HubTheme], assignment demoAssignment: [String: UUID]) {
+        if beforeDemo == nil { beforeDemo = (themes, assignment, isUnthemedCollapsed) }
+        themes = demoThemes
+        assignment = demoAssignment
+        isUnthemedCollapsed = false
+    }
+
+    func endDemo() {
+        guard let real = beforeDemo else { return }
+        beforeDemo = nil
+        themes = real.themes
+        assignment = real.assignment
+        isUnthemedCollapsed = real.unthemedCollapsed
+    }
+
     private func save() {
+        guard beforeDemo == nil else { return }
         if let data = try? JSONEncoder().encode(themes) { defaults.set(data, forKey: Keys.themes) }
         defaults.set(assignment.mapValues(\.uuidString), forKey: Keys.assignment)
         defaults.set(isUnthemedCollapsed, forKey: Keys.unthemedCollapsed)

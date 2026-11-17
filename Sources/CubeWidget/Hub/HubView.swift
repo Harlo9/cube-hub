@@ -63,7 +63,9 @@ struct HubView: View {
                                 onOpenTerminal: { onOpenTerminal(project.folder) })
             }
         case .session(let id):
-            if let session = board.sessions.first(where: { $0.id == id }) {
+            if hub.isDemo, let session = hub.demoSessions.first(where: { $0.id == id }) {
+                HubDemoTerminal(session: session)
+            } else if let session = board.sessions.first(where: { $0.id == id }) {
                 OutsideSessionView(session: session, onBringIntoHub: onBringIntoHub)
             } else {
                 HubEmptyPage(text: "Cette session est fermée.", onNewProject: onNewProject)
@@ -284,7 +286,7 @@ struct HubSidebar: View {
                 }
         case .session(let session):
             HubRow(name: session.projectName, session: session, folder: session.folder,
-                   fallbackLabel: "", isSelected: hub.selection == .session(session.id), isInTerminal: true)
+                   fallbackLabel: "", isSelected: hub.selection == .session(session.id), isInTerminal: !hub.isDemo)
                 .onTapGesture { hub.selection = .session(session.id) }
                 .contextMenu {
                     Button("Nouvelle session…", action: onNewProject)

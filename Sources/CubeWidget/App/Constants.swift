@@ -230,6 +230,8 @@ enum Constants {
     /// The window gathering the projects, each with its terminal running Claude.
     enum Hub {
         static let windowSize = CGSize(width: 1100, height: 700)
+        /// Size of the README's screenshot of the Hub (`--snapshot-hub`).
+        static let snapshotSize = CGSize(width: 1100, height: 780)
         static let sidebarWidth: CGFloat = 290
         /// Font size of the terminals, in points.
         static let fontSize: CGFloat = 13

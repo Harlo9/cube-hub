@@ -32,6 +32,19 @@ if let index = arguments.firstIndex(of: "--snapshot"), index + 1 < arguments.cou
     exit(0)
 }
 
+// Debug helper: `CubeWidget --snapshot-hub out.png` renders the Hub's demo into a PNG.
+if let index = arguments.firstIndex(of: "--snapshot-hub"), index + 1 < arguments.count {
+    let url = URL(fileURLWithPath: arguments[index + 1])
+    let app = NSApplication.shared
+    app.setActivationPolicy(.accessory)
+    var controller: HubWindowController?
+    MainActor.assumeIsolated {
+        controller = HubWindowController(board: SessionBoard(demo: true), widget: WidgetSettings())
+        controller?.snapshotDemo(to: url) { exit(0) }
+    }
+    app.run()
+}
+
 // Entry point. The app runs as an "accessory": no Dock icon, no app menu
 // (LSUIElement in Info.plist does the same for the launch itself).
 let app = NSApplication.shared

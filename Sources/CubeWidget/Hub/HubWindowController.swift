@@ -51,6 +51,12 @@ final class HubWindowController: NSObject, NSWindowDelegate {
         }
     }
 
+    /// Starts or ends the Hub's demo (fake sessions), and shows the Hub.
+    func toggleDemo() {
+        hub.toggleDemo()
+        show()
+    }
+
     /// Shows the Hub, on a given project if any.
     func show(project: HubProject? = nil) {
         if let project {
@@ -155,7 +161,29 @@ final class HubWindowController: NSObject, NSWindowDelegate {
 
     // MARK: - Window
 
-    private func makeWindow() -> NSWindow {
+    /// Debug helper (`--snapshot-hub out.png`): renders the Hub's demo into a PNG, in an
+    /// invisible window (nothing saved, no terminal started), then calls `completion`.
+    func snapshotDemo(to url: URL, completion: @escaping () -> Void) {
+        hub.toggleDemo()
+        let window = makeWindow(remembersFrame: false)
+        window.ignoresMouseEvents = true
+        // Tall enough for the whole demo list, "Nouveau cube" card included.
+        window.setContentSize(Constants.Hub.snapshotSize)
+        window.orderFront(nil)
+        // Moved off every screen once shown (macOS keeps it drawn), so it never shows up.
+        window.setFrameOrigin(NSPoint(x: -20_000, y: -20_000))
+        // Lets SwiftUI lay the list out (its theme panels follow the cards' frames).
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            // The window as macOS draws it (translucent sidebar and toolbar included).
+            if let image = CGWindowListCreateImage(.null, .optionIncludingWindow,
+                                                   CGWindowID(window.windowNumber), [.boundsIgnoreFraming, .bestResolution]) {
+                try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?.write(to: url)
+            }
+            completion()
+        }
+    }
+
+    private func makeWindow(remembersFrame: Bool = true) -> NSWindow {
         let window = NSWindow(
             contentRect: NSRect(origin: .zero, size: Constants.Hub.windowSize),
             styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
@@ -173,6 +201,7 @@ final class HubWindowController: NSObject, NSWindowDelegate {
             onOpenTerminal: { [weak self] folder in TerminalOpen.open(folder, besides: self?.window) },
             onOpenSettings: { [weak self] in self?.openSettings() }))
         window.center()
+        guard remembersFrame else { return window }
         window.setFrameAutosaveName("ClaudeHub")   // remembers its size and position (old name kept, so the saved frame stays)
         self.window = window
         return window
