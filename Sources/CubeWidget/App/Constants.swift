@@ -323,6 +323,9 @@ enum Constants {
         static let openTerminalIconSize: CGFloat = 18
         static let openTerminalIconColor = Color(hex: 0x6E6E73)
         static let openTerminalIconHoverColor = Color.white
+        /// Toolbar "Widget" button: text and icon color when the widget is shown / hidden.
+        static let widgetButtonOnColor = Color.white
+        static let widgetButtonOffColor = Color(hex: 0x8E8E93)
         /// Space between that Terminal window and the Hub window (0 = right against it).
         /// The window keeps Terminal's usual size (80 x 24 by default, set in Terminal's
         /// settings → Profiles → Window).

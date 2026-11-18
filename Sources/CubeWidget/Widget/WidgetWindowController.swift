@@ -196,6 +196,9 @@ final class WidgetWindowController {
         if settings.isVisible { panel.orderFrontRegardless() }
     }
 
+    /// Opens the Cube Hub (click on the app's Dock icon, or the app opened again from the Finder).
+    func openHub() { hubController.show() }
+
     /// Claude sessions running in the Hub's terminals (they stop when the app quits).
     var hasRunningHubProjects: Bool { hubController.hub.hasRunningProjects }
 

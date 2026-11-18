@@ -13,6 +13,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         Task { @MainActor in FrameLibrary.preload() }
     }
 
+    /// Click on the Dock icon, or the app opened again (Finder, Launchpad, Spotlight) while it
+    /// already runs: macOS asks the app to "reopen". Show the Cube Hub, like a normal app.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        widget?.openHub()
+        return false
+    }
+
     /// Quitting stops the Claude sessions running in the Hub: ask first.
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
         guard widget?.hasRunningHubProjects == true else { return .terminateNow }

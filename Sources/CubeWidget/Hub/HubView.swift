@@ -30,17 +30,31 @@ struct HubView: View {
             detail
                 .navigationTitle("Cube Hub")
                 .toolbar {
+                    // Same setting as "Afficher le widget" in the menu bar and in Réglages.
+                    // A labeled switch: "Widget", lit while the widget is on screen. Same
+                    // icon as Réglages → Widget (the stacked cards).
+                    ToolbarItem(placement: .primaryAction) {
+                        // A plain button, not a toggle: a toggle is filled with the Mac's
+                        // accent color (red, blue…), too loud here. White = shown, grey = hidden.
+                        Button { widget.isVisible.toggle() } label: {
+                            Label("Widget", systemImage: widget.isVisible ? "rectangle.stack.fill"
+                                                                         : "rectangle.stack")
+                                .labelStyle(.titleAndIcon)
+                                .foregroundStyle(widget.isVisible ? Constants.Hub.widgetButtonOnColor
+                                                                  : Constants.Hub.widgetButtonOffColor)
+                        }
+                        .help((widget.isVisible ? "Le widget est affiché : clic pour le masquer"
+                                                : "Le widget est masqué : clic pour l'afficher")
+                              + " (\(Constants.Window.toggleHotKeyLabel))")
+                        .accessibilityLabel("Afficher le widget")
+                        .accessibilityValue(widget.isVisible ? "affiché" : "masqué")
+                    }
+                    // On its own, outside the glass capsule shared by the volume and the gear.
+                    if #available(macOS 26, *) {
+                        ToolbarSpacer(.fixed, placement: .primaryAction)
+                    }
                     ToolbarItem(placement: .primaryAction) {
                         HubVolumeButton(sounds: .shared)
-                    }
-                    // Same setting as "Afficher le widget" in the menu bar and in Réglages.
-                    ToolbarItem(placement: .primaryAction) {
-                        Button { widget.isVisible.toggle() } label: {
-                            Label(widget.isVisible ? "Masquer le widget" : "Afficher le widget",
-                                  systemImage: widget.isVisible ? "cube.fill" : "cube")
-                        }
-                        .help((widget.isVisible ? "Masquer le widget" : "Afficher le widget")
-                              + " (\(Constants.Window.toggleHotKeyLabel))")
                     }
                     ToolbarItem(placement: .primaryAction) {
                         Button(action: onOpenSettings) {
