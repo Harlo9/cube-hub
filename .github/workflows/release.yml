@@ -19,6 +19,14 @@ jobs:
         with:
           fetch-depth: 0   # every commit: build.sh counts them for the build number
 
+      # The newest Xcode 26 if the runner has one (macOS 26 toolbar features need it),
+      # otherwise the runner's default Xcode.
+      - name: Use the newest Xcode
+        run: |
+          XCODE="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)"
+          if [ -n "$XCODE" ]; then sudo xcode-select -s "$XCODE"; fi
+          xcodebuild -version
+
       # The tag and the VERSION file must say the same thing (v0.2.0 ↔ 0.2.0).
       - name: Check the version
         run: |

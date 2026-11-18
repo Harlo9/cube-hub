@@ -50,9 +50,12 @@ struct HubView: View {
                         .accessibilityValue(widget.isVisible ? "affiché" : "masqué")
                     }
                     // On its own, outside the glass capsule shared by the volume and the gear.
+                    // ToolbarSpacer only exists from Xcode 26 (Swift 6.2): older Xcode skips it.
+                    #if compiler(>=6.2)
                     if #available(macOS 26, *) {
                         ToolbarSpacer(.fixed, placement: .primaryAction)
                     }
+                    #endif
                     ToolbarItem(placement: .primaryAction) {
                         HubVolumeButton(sounds: .shared)
                     }

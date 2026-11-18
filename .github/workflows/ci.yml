@@ -20,6 +20,14 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      # The newest Xcode 26 if the runner has one (macOS 26 toolbar features need it),
+      # otherwise the runner's default Xcode.
+      - name: Use the newest Xcode
+        run: |
+          XCODE="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)"
+          if [ -n "$XCODE" ]; then sudo xcode-select -s "$XCODE"; fi
+          xcodebuild -version
+
       - name: Swift version
         run: swift --version
 
