@@ -45,6 +45,32 @@ if let index = arguments.firstIndex(of: "--snapshot-hub"), index + 1 < arguments
     app.run()
 }
 
+// Debug helpers: `--snapshot-settings folder` (one PNG per page of Réglages) and
+// `--snapshot-welcome out.png` (the welcome window, Claude Code not plugged in yet).
+for flag in ["--snapshot-settings", "--snapshot-welcome"] {
+    guard let index = arguments.firstIndex(of: flag), index + 1 < arguments.count else { continue }
+    let url = URL(fileURLWithPath: arguments[index + 1])
+    let app = NSApplication.shared
+    app.setActivationPolicy(.accessory)
+    var keep: AnyObject?
+    MainActor.assumeIsolated {
+        if flag == "--snapshot-welcome" {
+            let welcome = WelcomeWindowController()
+            keep = welcome
+            welcome.snapshot(to: url) { exit(0) }
+        } else {
+            try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+            let hub = HubModel()
+            let settings = SettingsWindowController(widget: WidgetSettings(), themes: hub.themes,
+                                                    onResetWidgetPosition: {}, makeMenu: { nil })
+            keep = settings
+            settings.snapshotPages(to: url) { exit(0) }
+        }
+    }
+    _ = keep
+    app.run()
+}
+
 // Entry point. The app runs as an "accessory": no Dock icon, no app menu
 // (LSUIElement in Info.plist does the same for the launch itself).
 let app = NSApplication.shared

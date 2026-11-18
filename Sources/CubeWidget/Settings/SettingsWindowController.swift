@@ -37,7 +37,35 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         }
     }
 
-    private func makeWindow() -> NSWindow {
+    /// Debug helper (`--snapshot-settings folder`): one PNG per page, in an invisible
+    /// window. The page shown last is restored afterwards.
+    func snapshotPages(to folder: URL, completion: @escaping () -> Void) {
+        let lastPage = navigation.page
+        let window = makeWindow(remembersFrame: false)
+        navigation.page = SettingsPage.allCases[0]
+        WindowSnapshot.capture(window, to: snapshotURL(in: folder)) { [self] in
+            snapshotNext(Array(SettingsPage.allCases.dropFirst()), in: window, folder: folder) { [self] in
+                navigation.page = lastPage
+                completion()
+            }
+        }
+    }
+
+    private func snapshotNext(_ pages: [SettingsPage], in window: NSWindow, folder: URL,
+                              completion: @escaping () -> Void) {
+        guard let page = pages.first else { return completion() }
+        navigation.page = page
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in
+            WindowSnapshot.write(window, to: snapshotURL(in: folder))
+            snapshotNext(Array(pages.dropFirst()), in: window, folder: folder, completion: completion)
+        }
+    }
+
+    private func snapshotURL(in folder: URL) -> URL {
+        folder.appendingPathComponent("settings-\(navigation.page.rawValue).png")
+    }
+
+    private func makeWindow(remembersFrame: Bool = true) -> NSWindow {
         let window = NSWindow(
             contentRect: NSRect(origin: .zero, size: Constants.Settings.windowSize),
             styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
@@ -51,6 +79,7 @@ final class SettingsWindowController: NSObject, NSWindowDelegate {
         window.contentView = NSHostingView(rootView: SettingsView(
             navigation: navigation, widget: widget, themes: themes, onResetWidgetPosition: onResetWidgetPosition))
         window.center()
+        guard remembersFrame else { return window }
         window.setFrameAutosaveName("Reglages")   // remembers its size and position
         self.window = window
         return window

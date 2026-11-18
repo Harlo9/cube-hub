@@ -185,7 +185,8 @@ struct HubSidebar: View {
                         case .row(let item, let isThemed):
                             reorderable(row(for: item), rowID: item.id, layout: layout,
                                         position: positions[item.id] ?? 0,
-                                        inset: isThemed ? Constants.Hub.themePanelInset : 0)
+                                        // Same width as the themes' cards, so the cubes line up.
+                                        inset: themes.themes.isEmpty ? 0 : Constants.Hub.themePanelInset)
                                 .transition(.opacity)
                         case .newThemeField:
                             themeNameField(color: newThemeColor)
@@ -420,7 +421,6 @@ struct HubSidebar: View {
             Text("\(section.items.count)")
                 .font(.system(size: Constants.Hub.sectionTitleFontSize, weight: .medium).monospacedDigit())
                 .foregroundStyle(Constants.Colors.secondaryText.opacity(0.55))
-            if section.theme == nil { Spacer(minLength: 0) }
             Image(systemName: "chevron.down")
                 .font(.system(size: Constants.Hub.sectionTitleFontSize - 1, weight: .semibold))
                 .foregroundStyle(Constants.Colors.secondaryText.opacity(0.7))
@@ -925,7 +925,7 @@ private struct HubRow: View {
                     }
                 }
                 HubStatusLine(session: session, fallbackLabel: fallbackLabel,
-                              fontSize: Constants.Hub.rowDetailFontSize, showsTokens: false)
+                              fontSize: Constants.Hub.rowDetailFontSize, showsTokens: false, isShort: true)
                 if let task = session?.currentTask {
                     Text(task)
                         .font(.system(size: Constants.Hub.rowDetailFontSize))
@@ -936,9 +936,11 @@ private struct HubRow: View {
             .truncationMode(.tail)
             Spacer(minLength: 0)
             if let folder {
+                // Off icons only under the mouse or on the selected card: the name and status
+                // keep their room. Icons switched on always show.
                 HStack(spacing: Constants.Telegram.remoteIconSpacing) {
-                    TelegramReplyToggle(folder: folder)
-                    TelegramBell(folder: folder)
+                    TelegramReplyToggle(folder: folder, isRevealed: isHovered || isSelected)
+                    TelegramBell(folder: folder, isRevealed: isHovered || isSelected)
                 }
                     .frame(maxHeight: .infinity, alignment: .top)
             }
@@ -956,6 +958,24 @@ private struct HubRow: View {
         .onHover { isHovered = $0 }
         .animation(.easeOut(duration: 0.15), value: isHovered)
         .animation(.easeOut(duration: Constants.Halo.fadeDuration), value: isSelected)
+        // The whole name, status and task, even when the card cuts them.
+        .help(summary)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(summary)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+    }
+
+    /// "portfolio · terminé · 34 min · Ajouter la page projets" (tooltip, VoiceOver).
+    private var summary: String {
+        var parts = [name]
+        if let session {
+            parts += [session.status.longLabel, SessionFormat.duration(since: session.startedAt)]
+            if let task = session.currentTask { parts.append(task) }
+        } else if !fallbackLabel.isEmpty {
+            parts.append(fallbackLabel)
+        }
+        if isInTerminal { parts.append("dans Terminal") }
+        return parts.joined(separator: " · ")
     }
 }
 
@@ -965,6 +985,8 @@ private struct HubStatusLine: View {
     let fallbackLabel: String
     let fontSize: CGFloat
     let showsTokens: Bool
+    /// "attend" instead of "attend ta réponse" (the list's narrow cards).
+    var isShort = false
 
     var body: some View {
         TimelineView(.everyMinute) { _ in
@@ -978,7 +1000,7 @@ private struct HubStatusLine: View {
         }
         var details = "  ·  \(SessionFormat.duration(since: session.startedAt))"
         if showsTokens { details += "  ·  \(SessionFormat.tokens(session.contextTokens))" }
-        return Text(session.status.longLabel).foregroundColor(session.status.color)
+        return Text(isShort ? session.status.shortLabel : session.status.longLabel).foregroundColor(session.status.color)
             + Text(details).foregroundColor(Constants.Colors.secondaryText)
     }
 }

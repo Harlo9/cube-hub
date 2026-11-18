@@ -56,6 +56,11 @@ final class ClaudeHooks: ObservableObject {
         }
     }
 
+    /// Shows a state without reading the file. Only used by `--snapshot-welcome`.
+    func showStateForSnapshot(_ state: State) {
+        self.state = state
+    }
+
     func connect() throws { try change { Self.adding(to: $0, command: command) } }
     func disconnect() throws { try change { Self.removing(from: $0) } }
 

@@ -68,6 +68,7 @@ struct HubCube: View {
             }
         }
         .frame(width: size * 1.15, height: size)
+        .accessibilityHidden(true)   // the card says the status in words
     }
 
     private func image(at time: Double) -> NSImage? {

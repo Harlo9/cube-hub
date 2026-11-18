@@ -6,7 +6,7 @@ struct SoundsSettingsPage: View {
 
     var body: some View {
         Form {
-            Section("Sons") {
+            Section("Tous les sons") {
                 Toggle(isOn: $sounds.isEnabled) {
                     SettingLabel("Sons de l'app",
                                  "Désactivé, le cube ne fait plus aucun bruit. Les boutons ▶ marchent quand même.")

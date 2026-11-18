@@ -29,6 +29,13 @@ final class WelcomeWindowController: NSObject, NSWindowDelegate {
         }
     }
 
+    /// Debug helper (`--snapshot-welcome out.png`): the window as a new user sees it
+    /// (Claude Code not plugged in yet), in an invisible window. Nothing is written.
+    func snapshot(to url: URL, completion: @escaping () -> Void) {
+        ClaudeHooks.shared.showStateForSnapshot(.disconnected)
+        WindowSnapshot.capture(makeWindow(), to: url, completion: completion)
+    }
+
     private func makeWindow() -> NSWindow {
         let window = NSWindow(contentRect: .zero, styleMask: [.titled, .closable, .fullSizeContentView],
                               backing: .buffered, defer: false)
@@ -92,6 +99,9 @@ private struct WelcomeView: View {
                 .foregroundStyle(Constants.Colors.completed)
             Text("Les sessions déjà ouvertes apparaissent à leur prochain message. Les nouvelles, tout de suite.")
                 .foregroundStyle(.secondary)
+            Text("Le cube vit en haut à droite de ton écran (\(Constants.Window.toggleHotKeyLabel) pour le montrer ou le cacher) et dans la barre des menus. Double-clic sur une carte pour ouvrir le Cube Hub.")
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
             if let backup = hooks.lastBackup {
                 Text("Copie de ton ancien fichier : \(backup.path(percentEncoded: false))")
                     .font(.caption).foregroundStyle(.secondary).textSelection(.enabled)

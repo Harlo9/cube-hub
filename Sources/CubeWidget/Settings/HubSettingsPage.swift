@@ -77,7 +77,8 @@ private struct ThemeRow: View {
             }
             .labelsHidden()
             .pickerStyle(.menu)
-            .fixedSize()
+            // Same width on every row, so the columns line up.
+            .frame(width: Constants.Settings.colorPickerWidth)
             Button { themes.move(theme.id, by: -1) } label: { Image(systemName: "chevron.up") }
                 .disabled(isFirst)
                 .help("Monter")

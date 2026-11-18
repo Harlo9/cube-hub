@@ -166,21 +166,9 @@ final class HubWindowController: NSObject, NSWindowDelegate {
     func snapshotDemo(to url: URL, completion: @escaping () -> Void) {
         hub.toggleDemo()
         let window = makeWindow(remembersFrame: false)
-        window.ignoresMouseEvents = true
         // Tall enough for the whole demo list, "Nouveau cube" card included.
         window.setContentSize(Constants.Hub.snapshotSize)
-        window.orderFront(nil)
-        // Moved off every screen once shown (macOS keeps it drawn), so it never shows up.
-        window.setFrameOrigin(NSPoint(x: -20_000, y: -20_000))
-        // Lets SwiftUI lay the list out (its theme panels follow the cards' frames).
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            // The window as macOS draws it (translucent sidebar and toolbar included).
-            if let image = CGWindowListCreateImage(.null, .optionIncludingWindow,
-                                                   CGWindowID(window.windowNumber), [.boundsIgnoreFraming, .bestResolution]) {
-                try? NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:])?.write(to: url)
-            }
-            completion()
-        }
+        WindowSnapshot.capture(window, to: url, completion: completion)
     }
 
     private func makeWindow(remembersFrame: Bool = true) -> NSWindow {

@@ -62,7 +62,7 @@ struct TelegramCommandsPage: View {
             ForEach(projects, id: \.self) { folder in
                 Toggle(isOn: Binding(get: { settings.isRemoteAllowed(for: folder) },
                                      set: { settings.setRemoteAllowed($0, for: folder) })) {
-                    SettingLabel(folder.lastPathComponent, folder.path)
+                    SettingLabel(folder.lastPathComponent, folder.tildePath)
                 }
             }
         } header: {

@@ -5,11 +5,17 @@ import SwiftUI
 struct TelegramBell: View {
     let folder: URL
     var size: CGFloat = Constants.Telegram.bellSize
+    /// False: shown only when on (the Hub's list hides it until the card is hovered).
+    var isRevealed = true
     @ObservedObject private var settings = TelegramSettings.shared
     @State private var isHovered = false
 
     var body: some View {
         let isOn = settings.isOn(for: folder)
+        if isOn || isRevealed { button(isOn) }
+    }
+
+    private func button(_ isOn: Bool) -> some View {
         Button {
             settings.toggle(folder)
         } label: {
@@ -25,6 +31,9 @@ struct TelegramBell: View {
         .animation(.easeOut(duration: 0.15), value: isHovered)
         .animation(.easeOut(duration: 0.2), value: isOn)
         .help(helpText(isOn))
+        .accessibilityLabel("Notifications Telegram")
+        .accessibilityValue(isOn ? "activées" : "désactivées")
+        .transition(.opacity)
     }
 
     private func helpText(_ isOn: Bool) -> String {
@@ -41,12 +50,14 @@ struct TelegramBell: View {
 struct TelegramReplyToggle: View {
     let folder: URL
     var size: CGFloat = Constants.Telegram.bellSize
+    /// False: shown only when on (the Hub's list hides it until the card is hovered).
+    var isRevealed = true
     @ObservedObject private var settings = TelegramSettings.shared
     @State private var isHovered = false
 
     var body: some View {
-        if settings.remoteEnabled {
-            let isOn = settings.isRemoteAllowed(for: folder)
+        let isOn = settings.isRemoteAllowed(for: folder)
+        if settings.remoteEnabled, isOn || isRevealed {
             Button {
                 settings.setRemoteAllowed(!isOn, for: folder)
             } label: {
@@ -63,6 +74,9 @@ struct TelegramReplyToggle: View {
             .animation(.easeOut(duration: 0.2), value: isOn)
             .help(isOn ? "Tes réponses depuis Telegram sont acceptées pour ce projet (clic pour refuser)"
                        : "Réponses depuis Telegram refusées pour ce projet (clic pour les accepter)")
+            .accessibilityLabel("Réponses depuis Telegram")
+            .accessibilityValue(isOn ? "acceptées" : "refusées")
+            .transition(.opacity)
         }
     }
 }

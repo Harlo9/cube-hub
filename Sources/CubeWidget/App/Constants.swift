@@ -289,7 +289,7 @@ enum Constants {
         static let newSessionCardDash: [CGFloat] = [5, 4]
         static let newSessionCardDashWidth: CGFloat = 1.2
         /// Opacity of its text and dashes, when not under the mouse.
-        static let newSessionCardOpacity = 0.55
+        static let newSessionCardOpacity = 0.72
         /// The dashed square with a "+" where the cube would be.
         static let newSessionCubeSize: CGFloat = 30
         static let newSessionCubeCornerRadius: CGFloat = 8
@@ -489,6 +489,8 @@ enum Constants {
     }
 
     enum Settings {
+        /// Width of a theme's color menu (Réglages → Cube Hub), the same on every row.
+        static let colorPickerWidth: CGFloat = 100
         /// Size when first opened (then remembered), and smallest size, in points.
         static let windowSize = CGSize(width: 600, height: 430)
         static let minimumWindowSize = CGSize(width: 520, height: 340)

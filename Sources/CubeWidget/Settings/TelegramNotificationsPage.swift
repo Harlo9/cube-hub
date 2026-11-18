@@ -38,7 +38,7 @@ struct TelegramNotificationsPage: View {
                 ForEach(projects, id: \.self) { folder in
                     Toggle(isOn: Binding(get: { settings.isOn(for: folder) },
                                          set: { settings.setOn($0, for: folder) })) {
-                        SettingLabel(folder.lastPathComponent, folder.path)
+                        SettingLabel(folder.lastPathComponent, folder.tildePath)
                     }
                 }
             } header: {
