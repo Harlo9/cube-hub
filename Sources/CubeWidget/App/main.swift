@@ -45,6 +45,20 @@ if let index = arguments.firstIndex(of: "--snapshot-hub"), index + 1 < arguments
     app.run()
 }
 
+// Debug helper: `--record-widget folder` saves the widget's demo as PNG frames (README GIF).
+if let index = arguments.firstIndex(of: "--record-widget"), index + 1 < arguments.count {
+    let url = URL(fileURLWithPath: arguments[index + 1])
+    let app = NSApplication.shared
+    app.setActivationPolicy(.accessory)
+    var recording: WidgetRecording?
+    MainActor.assumeIsolated {
+        recording = WidgetRecording()
+        recording?.start(to: url) { exit(0) }
+    }
+    _ = recording
+    app.run()
+}
+
 // Debug helpers: `--snapshot-settings folder` (one PNG per page of Réglages) and
 // `--snapshot-welcome out.png` (the welcome window, Claude Code not plugged in yet).
 for flag in ["--snapshot-settings", "--snapshot-welcome"] {
