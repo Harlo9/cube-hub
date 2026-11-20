@@ -2,6 +2,14 @@
 
 What changes from one version of Cube Hub to the next. The newest version is at the top.
 
+## [Unreleased]
+
+### Changed
+- The Hub's toolbar: a **Widget** button, in its own capsule, shows or hides the widget (it replaces the small cube button). White when the widget is shown, grey when it's hidden, never in the Mac's accent color.
+
+### Fixed
+- Clicking Cube Hub's icon in the Dock (or opening the app again from the Finder) now opens the Hub.
+
 ## [0.2.0] - 2026-11-18
 
 The first version you can download: no need to build it yourself anymore.
