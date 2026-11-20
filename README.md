@@ -65,6 +65,7 @@ When I send a message to a session (in the Hub, in Terminal or from Telegram), i
 - **A real terminal per project** ([SwiftTerm](https://github.com/migueldeicaza/SwiftTerm)) with Claude Code running inside. Switching project doesn't stop anything.
 - **Themes** that look like binder dividers ("Freelance", "Side project"…), and I sort the cards just by dragging them.
 - A session started in Terminal can be **brought into the Hub** without losing the conversation.
+- Opens with a double-click on a card, from the menu bar, or with a click on the app's icon in the Dock. The **Widget** button in its toolbar shows or hides the widget.
 
 ### 📱 Telegram (optional)
 
